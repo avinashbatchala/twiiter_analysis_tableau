@@ -7,10 +7,7 @@ from tweepy import Stream
 '''
 Replaces the empty strings with API keys genrated, I removed them here as they are private
 '''
-access_token = "4824134823-0RmJm6xrG905UVP6CIsQ0kvTISasUVkImv7TR6O"
-access_token_secret = "VCqgnYiDPF6elHcnbRGJRiTGs3Vo3TiEKXcoM4G2oWMIS"
-consumer_key = "RMPUEZXZcYTe0UzIhCqJ7hVDy"
-consumer_secret = "Or5j6mnXcIOKVLeF5aHBpkecfFIdmvivoLdX3SaiJK3ptJYLwX"
+
 
 # List of keywords that must be included in the tweets, which we will extract
 hash_tags = ['Kabul', 'Afghanistan', 'Taliban']
@@ -44,3 +41,5 @@ auth.set_access_token(access_token, access_token_secret)
 stream = Stream(auth, l)
 
 stream.filter(languages=["en"], track=hash_tags)  #stream.filter param is used to extract only desired tweets. In this program the params used are languages=['en'], this is used to extract only tweets in english language.
+
+import testCleaner

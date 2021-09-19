@@ -49,13 +49,10 @@ while True:
 
     df['clean_tweet'] = df['text'].apply(lambda text: strip_all_entities(strip_links(text)))
 
-    df.head()
-
     # converting all tweets to lower case
     import string
 
     df['clean_tweet'] = df['clean_tweet'].str.lower()
-    df.head()
 
     from nltk.corpus import stopwords
     ", ".join(stopwords.words('english'))
@@ -77,8 +74,6 @@ while True:
     df.head()
 
     from nltk.corpus import wordnet
-    nltk.download('wordnet')
-    nltk.download('averaged_perceptron_tagger')
     from nltk.stem import WordNetLemmatizer
 
     lemmatizer = WordNetLemmatizer()
@@ -88,9 +83,7 @@ while True:
         return " ".join([lemmatizer.lemmatize(word, wordnet_map.get(pos[0], wordnet.NOUN)) for word, pos in pos_tagged_text])
 
     df['clean_tweet'] = df['clean_tweet'].apply(lambda text: lemmatize_words(text))
-    df.head()
 
-    #!pip install vaderSentiment
 
     from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
     analyzer = SentimentIntensityAnalyzer()
