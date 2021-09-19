@@ -309,346 +309,346 @@ df['tsne_y'] = X_embedded[:,1]
 
 df.to_csv('twitter_cluster_data.csv')
 
-from matplotlib import pyplot as plt
-import seaborn as sns
+# from matplotlib import pyplot as plt
+# import seaborn as sns
 
-# sns settings
-sns.set(rc={'figure.figsize':(15,15)})
+# # sns settings
+# sns.set(rc={'figure.figsize':(15,15)})
 
-# colors
-palette = sns.color_palette("bright", 1)
+# # colors
+# palette = sns.color_palette("bright", 1)
 
-# plot
-sns.scatterplot(X_embedded[:,0], X_embedded[:,1], palette=palette)
-plt.title('t-SNE with no Labels')
-plt.savefig("t-sne_covid19.png")
-plt.show()
+# # plot
+# sns.scatterplot(X_embedded[:,0], X_embedded[:,1], palette=palette)
+# plt.title('t-SNE with no Labels')
+# plt.savefig("t-sne_covid19.png")
+# plt.show()
 
 # Commented out IPython magic to ensure Python compatibility.
 # %matplotlib inline
-from matplotlib import pyplot as plt
-import seaborn as sns
+# from matplotlib import pyplot as plt
+# import seaborn as sns
 
-# sns settings
-sns.set(rc={'figure.figsize':(15,15)})
+# # sns settings
+# sns.set(rc={'figure.figsize':(15,15)})
 
-# colors
-palette = sns.hls_palette(10, l=.4, s=.9)
+# # colors
+# palette = sns.hls_palette(10, l=.4, s=.9)
 
-# plot
-sns.scatterplot(X_embedded[:,0], X_embedded[:,1], hue=y_pred, legend='full', palette=palette)
-plt.title('t-SNE with Kmeans Labels')
-plt.savefig("improved_cluster_tsne.png")
-plt.show()
+# # plot
+# sns.scatterplot(X_embedded[:,0], X_embedded[:,1], hue=y_pred, legend='full', palette=palette)
+# plt.title('t-SNE with Kmeans Labels')
+# plt.savefig("improved_cluster_tsne.png")
+# plt.show()
 
-from sklearn.decomposition import LatentDirichletAllocation
-from sklearn.feature_extraction.text import CountVectorizer
-vectorizers = []
+# from sklearn.decomposition import LatentDirichletAllocation
+# from sklearn.feature_extraction.text import CountVectorizer
+# vectorizers = []
     
-for ii in range(0, 10):
-    # Creating a vectorizer
-    vectorizers.append(CountVectorizer(min_df=5, max_df=0.9, stop_words='english', lowercase=True, token_pattern='[a-zA-Z\-][a-zA-Z\-]{2,}'))
+# for ii in range(0, 10):
+#     # Creating a vectorizer
+#     vectorizers.append(CountVectorizer(min_df=5, max_df=0.9, stop_words='english', lowercase=True, token_pattern='[a-zA-Z\-][a-zA-Z\-]{2,}'))
 
-vectorizers[0]
+# vectorizers[0]
 
-vectorized_data = []
+# vectorized_data = []
 
-for current_cluster, cvec in enumerate(vectorizers):
-    try:
-        vectorized_data.append(cvec.fit_transform(df.loc[df['y'] == current_cluster, 'clean_tweet']))
-    except Exception as e:
-        print("Not enough instances in cluster: " + str(current_cluster))
-        vectorized_data.append(None)
+# for current_cluster, cvec in enumerate(vectorizers):
+#     try:
+#         vectorized_data.append(cvec.fit_transform(df.loc[df['y'] == current_cluster, 'clean_tweet']))
+#     except Exception as e:
+#         print("Not enough instances in cluster: " + str(current_cluster))
+#         vectorized_data.append(None)
 
-# number of topics per cluster
-NUM_TOPICS_PER_CLUSTER = 3
+# # number of topics per cluster
+# NUM_TOPICS_PER_CLUSTER = 3
 
-lda_models = []
-for ii in range(0, 10):
-    # Latent Dirichlet Allocation Model
-    lda = LatentDirichletAllocation(n_components=NUM_TOPICS_PER_CLUSTER, max_iter=10, learning_method='online',verbose=False, random_state=42)
-    lda_models.append(lda)
+# lda_models = []
+# for ii in range(0, 10):
+#     # Latent Dirichlet Allocation Model
+#     lda = LatentDirichletAllocation(n_components=NUM_TOPICS_PER_CLUSTER, max_iter=10, learning_method='online',verbose=False, random_state=42)
+#     lda_models.append(lda)
     
-lda_models[0]
+# lda_models[0]
 
-clusters_lda_data = []
+# clusters_lda_data = []
 
-for current_cluster, lda in enumerate(lda_models):
-    # print("Current Cluster: " + str(current_cluster))
+# for current_cluster, lda in enumerate(lda_models):
+#     # print("Current Cluster: " + str(current_cluster))
     
-    if vectorized_data[current_cluster] != None:
-        clusters_lda_data.append((lda.fit_transform(vectorized_data[current_cluster])))
+#     if vectorized_data[current_cluster] != None:
+#         clusters_lda_data.append((lda.fit_transform(vectorized_data[current_cluster])))
 
-# Functions for printing keywords for each topic
-def selected_topics(model, vectorizer, top_n=3):
-    current_words = []
-    keywords = []
+# # Functions for printing keywords for each topic
+# def selected_topics(model, vectorizer, top_n=3):
+#     current_words = []
+#     keywords = []
     
-    for idx, topic in enumerate(model.components_):
-        words = [(vectorizer.get_feature_names()[i], topic[i]) for i in topic.argsort()[:-top_n - 1:-1]]
-        for word in words:
-            if word[0] not in current_words:
-                keywords.append(word)
-                current_words.append(word[0])
+#     for idx, topic in enumerate(model.components_):
+#         words = [(vectorizer.get_feature_names()[i], topic[i]) for i in topic.argsort()[:-top_n - 1:-1]]
+#         for word in words:
+#             if word[0] not in current_words:
+#                 keywords.append(word)
+#                 current_words.append(word[0])
                 
-    keywords.sort(key = lambda x: x[1])  
-    keywords.reverse()
-    return_values = []
-    for ii in keywords:
-        return_values.append(ii[0])
-    return return_values
+#     keywords.sort(key = lambda x: x[1])  
+#     keywords.reverse()
+#     return_values = []
+#     for ii in keywords:
+#         return_values.append(ii[0])
+#     return return_values
 
-all_keywords = []
-for current_vectorizer, lda in enumerate(lda_models):
-    # print("Current Cluster: " + str(current_vectorizer))
+# all_keywords = []
+# for current_vectorizer, lda in enumerate(lda_models):
+#     # print("Current Cluster: " + str(current_vectorizer))
 
-    if vectorized_data[current_vectorizer] != None:
-        all_keywords.append(selected_topics(lda, vectorizers[current_vectorizer]))
+#     if vectorized_data[current_vectorizer] != None:
+#         all_keywords.append(selected_topics(lda, vectorizers[current_vectorizer]))
 
-all_keywords[0][:5]
+# all_keywords[0][:5]
 
-f=open('/content/topics_final.txt','w')
+# f=open('/content/topics_final.txt','w')
 
-count = 0
+# count = 0
 
-for ii in all_keywords:
+# for ii in all_keywords:
 
-    if vectorized_data[count] != None:
-        f.write(', '.join(ii) + "\n")
-    else:
-        f.write("Not enough instances to be determined. \n")
-        f.write(', '.join(ii) + "\n")
-    count += 1
+#     if vectorized_data[count] != None:
+#         f.write(', '.join(ii) + "\n")
+#     else:
+#         f.write("Not enough instances to be determined. \n")
+#         f.write(', '.join(ii) + "\n")
+#     count += 1
 
-f.close()
+# f.close()
 
-# function to print out classification model report
-def classification_report(model_name, test, pred):
-    from sklearn.metrics import precision_score, recall_score
-    from sklearn.metrics import accuracy_score
-    from sklearn.metrics import f1_score
+# # function to print out classification model report
+# def classification_report(model_name, test, pred):
+#     from sklearn.metrics import precision_score, recall_score
+#     from sklearn.metrics import accuracy_score
+#     from sklearn.metrics import f1_score
     
-    print(model_name, ":\n")
-    print("Accuracy Score: ", '{:,.3f}'.format(float(accuracy_score(test, pred)) * 100), "%")
-    print("     Precision: ", '{:,.3f}'.format(float(precision_score(test, pred, average='macro')) * 100), "%")
-    print("        Recall: ", '{:,.3f}'.format(float(recall_score(test, pred, average='macro')) * 100), "%")
-    print("      F1 score: ", '{:,.3f}'.format(float(f1_score(test, pred, average='macro')) * 100), "%")
+#     print(model_name, ":\n")
+#     print("Accuracy Score: ", '{:,.3f}'.format(float(accuracy_score(test, pred)) * 100), "%")
+#     print("     Precision: ", '{:,.3f}'.format(float(precision_score(test, pred, average='macro')) * 100), "%")
+#     print("        Recall: ", '{:,.3f}'.format(float(recall_score(test, pred, average='macro')) * 100), "%")
+#     print("      F1 score: ", '{:,.3f}'.format(float(f1_score(test, pred, average='macro')) * 100), "%")
 
-from sklearn.model_selection import train_test_split
+# from sklearn.model_selection import train_test_split
 
-# test set size of 20% of the data and the random seed 42 <3
-X_train, X_test, y_train, y_test = train_test_split(X.toarray(),y_pred, test_size=0.2, random_state=42)
+# # test set size of 20% of the data and the random seed 42 <3
+# X_train, X_test, y_train, y_test = train_test_split(X.toarray(),y_pred, test_size=0.2, random_state=42)
 
-print("X_train size:", len(X_train))
-print("X_test size:", len(X_test), "\n")
+# print("X_train size:", len(X_train))
+# print("X_test size:", len(X_test), "\n")
 
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import cross_val_predict
-from sklearn.linear_model import SGDClassifier
+# from sklearn.model_selection import cross_val_score
+# from sklearn.model_selection import cross_val_predict
+# from sklearn.linear_model import SGDClassifier
 
-# SGD instance
-sgd_clf = SGDClassifier(max_iter=10000, tol=1e-3, random_state=42, n_jobs=4)
-# train SGD
-sgd_clf.fit(X_train, y_train)
+# # SGD instance
+# sgd_clf = SGDClassifier(max_iter=10000, tol=1e-3, random_state=42, n_jobs=4)
+# # train SGD
+# sgd_clf.fit(X_train, y_train)
 
-# cross validation predictions
-sgd_pred = cross_val_predict(sgd_clf, X_train, y_train, cv=3, n_jobs=4)
+# # cross validation predictions
+# sgd_pred = cross_val_predict(sgd_clf, X_train, y_train, cv=3, n_jobs=4)
 
-# print out the classification report
-classification_report("Stochastic Gradient Descent Report (Training Set)", y_train, sgd_pred)
+# # print out the classification report
+# classification_report("Stochastic Gradient Descent Report (Training Set)", y_train, sgd_pred)
 
-# cross validation predictions
-sgd_pred = cross_val_predict(sgd_clf, X_test, y_test, cv=3, n_jobs=4)
+# # cross validation predictions
+# sgd_pred = cross_val_predict(sgd_clf, X_test, y_test, cv=3, n_jobs=4)
 
-# print out the classification report
-classification_report("Stochastic Gradient Descent Report (Test Set)", y_test, sgd_pred)
+# # print out the classification report
+# classification_report("Stochastic Gradient Descent Report (Test Set)", y_test, sgd_pred)
 
-sgd_cv_score = cross_val_score(sgd_clf, X.toarray(), y_pred, cv=10)
-print("Mean cv Score - SGD: {:,.3f}".format(float(sgd_cv_score.mean()) * 100), "%")
+# sgd_cv_score = cross_val_score(sgd_clf, X.toarray(), y_pred, cv=10)
+# print("Mean cv Score - SGD: {:,.3f}".format(float(sgd_cv_score.mean()) * 100), "%")
 
-from bokeh.models import CustomJS
+# from bokeh.models import CustomJS
 
-# handle the currently selected article
-def selected_code():
-    code = """
-            var tweet = [];
-            var user = [];
-            var time = [];
-            cb_data.source.selected.indices.forEach(index => tweet.push(source.data['text'][index]));
-            cb_data.source.selected.indices.forEach(index => user.push(source.data['username'][index]));
-            cb_data.source.selected.indices.forEach(index => time.push(source.data['timestamp'][index]));
-            text = "<h4>" + titles[0].toString().replace(/<br>/g, ' ') + "</h4>";
-            user = "<p1><b>User:</b> " + user[0].toString().replace(/<br>/g, ' ') + "<br>"
-            // time = "<b>Journal</b>" + time[0].toString() + "<br>"
-            current_selection.text = tweet + user + time
-            current_selection.change.emit();
-    """
-    return code
+# # handle the currently selected article
+# def selected_code():
+#     code = """
+#             var tweet = [];
+#             var user = [];
+#             var time = [];
+#             cb_data.source.selected.indices.forEach(index => tweet.push(source.data['text'][index]));
+#             cb_data.source.selected.indices.forEach(index => user.push(source.data['username'][index]));
+#             cb_data.source.selected.indices.forEach(index => time.push(source.data['timestamp'][index]));
+#             text = "<h4>" + titles[0].toString().replace(/<br>/g, ' ') + "</h4>";
+#             user = "<p1><b>User:</b> " + user[0].toString().replace(/<br>/g, ' ') + "<br>"
+#             // time = "<b>Journal</b>" + time[0].toString() + "<br>"
+#             current_selection.text = tweet + user + time
+#             current_selection.change.emit();
+#     """
+#     return code
 
-# handle the keywords and search
-def input_callback(plot, source, out_text, topics): 
+# # handle the keywords and search
+# def input_callback(plot, source, out_text, topics): 
 
-    # slider call back for cluster selection
-    callback = CustomJS(args=dict(p=plot, source=source, out_text=out_text, topics=topics), code="""
-				var key = text.value;
-				key = key.toLowerCase();
-				var cluster = slider.value;
-                var data = source.data; 
+#     # slider call back for cluster selection
+#     callback = CustomJS(args=dict(p=plot, source=source, out_text=out_text, topics=topics), code="""
+# 				var key = text.value;
+# 				key = key.toLowerCase();
+# 				var cluster = slider.value;
+#                 var data = source.data; 
                 
                 
-                x = data['x'];
-                y = data['y'];
-                x_backup = data['x_backup'];
-                y_backup = data['y_backup'];
-                labels = data['desc'];
-                tweet = data['text'];
-                user = data['username'];
-                analysis = data['compound'];
-                if (cluster == '10') {
-                    out_text.text = 'Keywords: Slide to specific cluster to see the keywords.';
-                    for (i = 0; i < x.length; i++) {
-						if(tweet[i].includes(key) || 
-						user[i].includes(key) || 
-						[i].includes(key) || 
-						compound[i].includes(key)) {
-							x[i] = x_backup[i];
-							y[i] = y_backup[i];
-						} else {
-							x[i] = undefined;
-							y[i] = undefined;
-						}
-                    }
-                }
-                else {
-                    out_text.text = 'Keywords: ' + topics[Number(cluster)];
-                    for (i = 0; i < x.length; i++) {
-                        if(tweet[i] == cluster) {
-							if(user[i].includes(key) || 
-							analysis[i].includes(key) || 
-							{
-								x[i] = x_backup[i];
-								y[i] = y_backup[i];
-							} else {
-								x[i] = undefined;
-								y[i] = undefined;
-							}
-                        } else {
-                            x[i] = undefined;
-                            y[i] = undefined;
-                        }
-                    }
-                }
-            source.change.emit();
-            """)
-    return callback
+#                 x = data['x'];
+#                 y = data['y'];
+#                 x_backup = data['x_backup'];
+#                 y_backup = data['y_backup'];
+#                 labels = data['desc'];
+#                 tweet = data['text'];
+#                 user = data['username'];
+#                 analysis = data['compound'];
+#                 if (cluster == '10') {
+#                     out_text.text = 'Keywords: Slide to specific cluster to see the keywords.';
+#                     for (i = 0; i < x.length; i++) {
+# 						if(tweet[i].includes(key) || 
+# 						user[i].includes(key) || 
+# 						[i].includes(key) || 
+# 						compound[i].includes(key)) {
+# 							x[i] = x_backup[i];
+# 							y[i] = y_backup[i];
+# 						} else {
+# 							x[i] = undefined;
+# 							y[i] = undefined;
+# 						}
+#                     }
+#                 }
+#                 else {
+#                     out_text.text = 'Keywords: ' + topics[Number(cluster)];
+#                     for (i = 0; i < x.length; i++) {
+#                         if(tweet[i] == cluster) {
+# 							if(user[i].includes(key) || 
+# 							analysis[i].includes(key) || 
+# 							{
+# 								x[i] = x_backup[i];
+# 								y[i] = y_backup[i];
+# 							} else {
+# 								x[i] = undefined;
+# 								y[i] = undefined;
+# 							}
+#                         } else {
+#                             x[i] = undefined;
+#                             y[i] = undefined;
+#                         }
+#                     }
+#                 }
+#             source.change.emit();
+#             """)
+#     return callback
 
-import bokeh
-from bokeh.models import ColumnDataSource, HoverTool, LinearColorMapper, CustomJS, Slider, TapTool, TextInput
-from bokeh.palettes import Category20
-from bokeh.transform import linear_cmap, transform
-from bokeh.io import output_file, show, output_notebook
-from bokeh.plotting import figure
-from bokeh.models import RadioButtonGroup, TextInput, Div, Paragraph
-from bokeh.layouts import column, widgetbox, row, layout
-from bokeh.layouts import column
+# import bokeh
+# from bokeh.models import ColumnDataSource, HoverTool, LinearColorMapper, CustomJS, Slider, TapTool, TextInput
+# from bokeh.palettes import Category20
+# from bokeh.transform import linear_cmap, transform
+# from bokeh.io import output_file, show, output_notebook
+# from bokeh.plotting import figure
+# from bokeh.models import RadioButtonGroup, TextInput, Div, Paragraph
+# from bokeh.layouts import column, widgetbox, row, layout
+# from bokeh.layouts import column
 
-topic_path = '/content/topics_final.txt'
-with open(topic_path) as f:
-    topics = f.readlines()
+# topic_path = '/content/topics_final.txt'
+# with open(topic_path) as f:
+#     topics = f.readlines()
 
-# show on notebook
-output_notebook()
-# target labels
-y_labels = y_pred
+# # show on notebook
+# output_notebook()
+# # target labels
+# y_labels = y_pred
 
-# data sources
-source = ColumnDataSource(data=dict(
-    x= X_embedded[:,0], 
-    y= X_embedded[:,1],
-    x_backup = X_embedded[:,0],
-    y_backup = X_embedded[:,1],
-    desc= y_labels, 
-    text= df['text'],
-    username = df['username'],
-    analysis = df['analysis']
-    ))
+# # data sources
+# source = ColumnDataSource(data=dict(
+#     x= X_embedded[:,0], 
+#     y= X_embedded[:,1],
+#     x_backup = X_embedded[:,0],
+#     y_backup = X_embedded[:,1],
+#     desc= y_labels, 
+#     text= df['text'],
+#     username = df['username'],
+#     analysis = df['analysis']
+#     ))
 
-# hover over information
-hover = HoverTool(tooltips=[
-    ("text", "@text{safe}"),
-    ("username", "@username{safe}"),
-    ("alaysis", "@analysis")
-],
-point_policy="follow_mouse")
+# # hover over information
+# hover = HoverTool(tooltips=[
+#     ("text", "@text{safe}"),
+#     ("username", "@username{safe}"),
+#     ("alaysis", "@analysis")
+# ],
+# point_policy="follow_mouse")
 
-# map colors
-mapper = linear_cmap(field_name='desc', 
-                     palette=Category20[20],
-                     low=min(y_labels) ,high=max(y_labels))
+# # map colors
+# mapper = linear_cmap(field_name='desc', 
+#                      palette=Category20[20],
+#                      low=min(y_labels) ,high=max(y_labels))
 
-# prepare the figure
-plot = figure(plot_width=1000, plot_height=850, 
-           tools=[hover, 'pan', 'wheel_zoom', 'box_zoom', 'reset', 'save', 'tap'], 
-           title="Clustering of the tweets t-SNE and K-Means", 
-           toolbar_location="above")
+# # prepare the figure
+# plot = figure(plot_width=1000, plot_height=850, 
+#            tools=[hover, 'pan', 'wheel_zoom', 'box_zoom', 'reset', 'save', 'tap'], 
+#            title="Clustering of the tweets t-SNE and K-Means", 
+#            toolbar_location="above")
 
-# plot settings
-plot.scatter('x', 'y', size=5, 
-          source=source,
-          fill_color=mapper,
-          line_alpha=0.3,
-          line_color="black",
-          legend = 'labels')
-plot.legend.background_fill_alpha = 0.6
+# # plot settings
+# plot.scatter('x', 'y', size=5, 
+#           source=source,
+#           fill_color=mapper,
+#           line_alpha=0.3,
+#           line_color="black",
+#           legend = 'labels')
+# plot.legend.background_fill_alpha = 0.6
 
-# Keywords
-text_banner = Paragraph(text= 'Keywords: Slide to specific cluster to see the keywords.', height=45)
-input_callback_1 = input_callback(plot, source, text_banner, topics)
+# # Keywords
+# text_banner = Paragraph(text= 'Keywords: Slide to specific cluster to see the keywords.', height=45)
+# input_callback_1 = input_callback(plot, source, text_banner, topics)
 
-# currently selected article
-div_curr = Div(text="""Click on a plot to see the link to the article.""",height=150)
-callback_selected = CustomJS(args=dict(source=source, current_selection=div_curr), code=selected_code())
-taptool = plot.select(type=TapTool)
-taptool.callback = callback_selected
+# # currently selected article
+# div_curr = Div(text="""Click on a plot to see the link to the article.""",height=150)
+# callback_selected = CustomJS(args=dict(source=source, current_selection=div_curr), code=selected_code())
+# taptool = plot.select(type=TapTool)
+# taptool.callback = callback_selected
 
-# WIDGETS
-slider = Slider(start=0, end=10, value=10, step=1, title="Cluster #", callback=input_callback_1)
-keyword = TextInput(title="Search:", callback=input_callback_1)
+# # WIDGETS
+# slider = Slider(start=0, end=10, value=10, step=1, title="Cluster #", callback=input_callback_1)
+# keyword = TextInput(title="Search:", callback=input_callback_1)
 
-# pass call back arguments
-input_callback_1.args["text"] = keyword
-input_callback_1.args["slider"] = slider
+# # pass call back arguments
+# input_callback_1.args["text"] = keyword
+# input_callback_1.args["slider"] = slider
 
-# STYLE
-slider.sizing_mode = "stretch_width"
-slider.margin=15
+# # STYLE
+# slider.sizing_mode = "stretch_width"
+# slider.margin=15
 
-keyword.sizing_mode = "scale_both"
-keyword.margin=15
+# keyword.sizing_mode = "scale_both"
+# keyword.margin=15
 
-div_curr.style={'color': '#BF0A30', 'font-family': 'Helvetica Neue, Helvetica, Arial, sans-serif;', 'font-size': '1.1em'}
-div_curr.sizing_mode = "scale_both"
-div_curr.margin = 20
+# div_curr.style={'color': '#BF0A30', 'font-family': 'Helvetica Neue, Helvetica, Arial, sans-serif;', 'font-size': '1.1em'}
+# div_curr.sizing_mode = "scale_both"
+# div_curr.margin = 20
 
-text_banner.style={'color': '#0269A4', 'font-family': 'Helvetica Neue, Helvetica, Arial, sans-serif;', 'font-size': '1.1em'}
-text_banner.sizing_mode = "scale_both"
-text_banner.margin = 20
+# text_banner.style={'color': '#0269A4', 'font-family': 'Helvetica Neue, Helvetica, Arial, sans-serif;', 'font-size': '1.1em'}
+# text_banner.sizing_mode = "scale_both"
+# text_banner.margin = 20
 
-plot.sizing_mode = "scale_both"
-plot.margin = 5
+# plot.sizing_mode = "scale_both"
+# plot.margin = 5
 
-r = row(div_curr,text_banner)
-r.sizing_mode = "scale_both"
+# r = row(div_curr,text_banner)
+# r.sizing_mode = "scale_both"
 
-# LAYOUT OF THE PAGE
-l = layout([
-    [slider, keyword],
-    [text_banner],
-    [div_curr],
-    [plot],
-])
-l.sizing_mode = "scale_both"
+# # LAYOUT OF THE PAGE
+# l = layout([
+#     [slider, keyword],
+#     [text_banner],
+#     [div_curr],
+#     [plot],
+# ])
+# l.sizing_mode = "scale_both"
 
-# show
-output_file('tweets_clustering_interactive.html')
-show(l)
+# # show
+# output_file('tweets_clustering_interactive.html')
+# show(l)
