@@ -155,7 +155,7 @@ def lemmatize_words(text):
 df['clean_tweet'] = df['clean_tweet'].apply(lambda text: lemmatize_words(text))
 df.head()
 
-!pip install vaderSentiment
+#!pip install vaderSentiment
 
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 analyzer = SentimentIntensityAnalyzer()
