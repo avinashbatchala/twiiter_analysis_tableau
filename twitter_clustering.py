@@ -27,10 +27,10 @@ consumer_secret = "Or5j6mnXcIOKVLeF5aHBpkecfFIdmvivoLdX3SaiJK3ptJYLwX"
 hash_tags = ['Kabul', 'Afghanistan', 'Taliban']
 
 # Initialize Global Count variable
-count = 0
+# count = 0
 
 # Input number of tweets to be downloaded
-num_tweets = 5000
+# num_tweets = 50
 
 # Create the class that will handle the tweet stream.
 class StdOutListener(StreamListener):
@@ -41,14 +41,14 @@ class StdOutListener(StreamListener):
         global count
         global num_tweets
         global stream
-        if count < num_tweets:
-            file = open("tweets1.txt", "a")
-            file.write(data)
-            file.close()
-            count += 1
-            return True
-        else:
-            stream.disconnect()
+        # if count < num_tweets:
+        file = open("tweets1.txt", "a")
+        file.write(data)
+        file.close()
+            # count += 1
+        return True
+        # else:
+        #     stream.disconnect()
 
     def on_error(self, status):
         print(status)
@@ -70,7 +70,7 @@ import nltk #nltk is a Natural Language Processing Library
 nltk.download('stopwords')
 import json
 
-tweets_data_path = "/content/tweets1.txt"  
+tweets_data_path = "tweets1.txt"  
 tweets_data = []  
 tweets_file = open(tweets_data_path, "r")  
 for line in tweets_file:  
@@ -187,40 +187,40 @@ hash_tags = [item for sublist in hash_tags for item in sublist]
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-a = nltk.FreqDist(hash_tags)
-d = pd.DataFrame({'Hashtag': list(a.keys()),
-                  'Count': list(a.values())})
-# selecting top 10 most frequent hashtags     
-d = d.nlargest(columns="Count", n = 10) 
-plt.figure(figsize=(16,5))
-ax = sns.barplot(data=d, x= "Hashtag", y = "Count")
-ax.set(ylabel = 'Count')
-plt.show()
-
-# Plotting and visualizing the counts
-plt.title('Sentiment Analysis')
-plt.xlabel('Sentiment')
-plt.ylabel('Counts')
-df['analysis'].value_counts().plot(kind = 'bar')
-plt.show()
-
-# Let’s plot the results
-import matplotlib.pyplot as plt
-
-# time_subj = pd.Series(data=df['subjectivity'].values, index=df['timestamp'])
-# time_subj.plot(figsize=(16, 4), label="subjectivity", legend=True)
+# a = nltk.FreqDist(hash_tags)
+# d = pd.DataFrame({'Hashtag': list(a.keys()),
+#                   'Count': list(a.values())})
+# # selecting top 10 most frequent hashtags     
+# d = d.nlargest(columns="Count", n = 10) 
+# plt.figure(figsize=(16,5))
+# ax = sns.barplot(data=d, x= "Hashtag", y = "Count")
+# ax.set(ylabel = 'Count')
 # plt.show()
 
-time_polar = pd.Series(data=df['compound'].values, index=df['timestamp'])
-time_polar.plot(figsize=(16, 4), label="polarity", legend=True)
-plt.show()
+# # Plotting and visualizing the counts
+# plt.title('Sentiment Analysis')
+# plt.xlabel('Sentiment')
+# plt.ylabel('Counts')
+# df['analysis'].value_counts().plot(kind = 'bar')
+# plt.show()
 
-time_likes = pd.Series(data=df['likes'].values, index=df['timestamp'])
-time_likes.plot(figsize=(16, 4), label="Likes", legend=True)
-plt.show()
+# Let’s plot the results
+# import matplotlib.pyplot as plt
 
-df.plot.scatter(x='negative', y='positive')
-plt.show()
+# # time_subj = pd.Series(data=df['subjectivity'].values, index=df['timestamp'])
+# # time_subj.plot(figsize=(16, 4), label="subjectivity", legend=True)
+# # plt.show()
+
+# time_polar = pd.Series(data=df['compound'].values, index=df['timestamp'])
+# time_polar.plot(figsize=(16, 4), label="polarity", legend=True)
+# plt.show()
+
+# time_likes = pd.Series(data=df['likes'].values, index=df['timestamp'])
+# time_likes.plot(figsize=(16, 4), label="Likes", legend=True)
+# plt.show()
+
+# df.plot.scatter(x='negative', y='positive')
+# plt.show()
 
 # df.plot.scatter(x='subjectivity', y='polarity')
 # plt.show()
@@ -263,18 +263,18 @@ y = y_pred
 df['y'] = y_pred
 
 df['cluster'] = pd.Series(y, index=df.index)
-print(df['cluster'])
+# print(df['cluster'])
 
 # sns settings
-sns.set(rc={'figure.figsize':(10, 10)})
+# sns.set(rc={'figure.figsize':(10, 10)})
 
-# colors
-palette = sns.color_palette("bright", len(set(y)))
+# # colors
+# palette = sns.color_palette("bright", len(set(y)))
 
-# plot
-sns.scatterplot(pca_result[:,0], pca_result[:,1], hue=y, legend='full', palette=palette)
-plt.title("PCA Covid-19 Tweets - Clustered (K-Means) - Tf-idf with Plain Text")
-# plt.savefig("plots/pca_covid19_label_TFID.png")
+# # plot
+# sns.scatterplot(pca_result[:,0], pca_result[:,1], hue=y, legend='full', palette=palette)
+# plt.title("PCA Covid-19 Tweets - Clustered (K-Means) - Tf-idf with Plain Text")
+# # plt.savefig("plots/pca_covid19_label_TFID.png")
 plt.show()
 
 # Commented out IPython magic to ensure Python compatibility.
@@ -282,20 +282,20 @@ plt.show()
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-ax = plt.figure(figsize=(16,10)).gca(projection='3d')
-ax.scatter(
-    xs=pca_result[:,0], 
-    ys=pca_result[:,1], 
-    zs=pca_result[:,2], 
-    c=y, 
-    cmap='tab10'
-)
-ax.set_xlabel('pca-one')
-ax.set_ylabel('pca-two')
-ax.set_zlabel('pca-three')
-plt.title("PCA Covid-19 Tweets (3D) - Clustered (K-Means) - Tf-idf with Plain Text")
-# plt.savefig("plots/pca_covid19_label_TFID_3d.png")
-plt.show()
+# ax = plt.figure(figsize=(16,10)).gca(projection='3d')
+# ax.scatter(
+#     xs=pca_result[:,0], 
+#     ys=pca_result[:,1], 
+#     zs=pca_result[:,2], 
+#     c=y, 
+#     cmap='tab10'
+# )
+# ax.set_xlabel('pca-one')
+# ax.set_ylabel('pca-two')
+# ax.set_zlabel('pca-three')
+# plt.title("PCA Covid-19 Tweets (3D) - Clustered (K-Means) - Tf-idf with Plain Text")
+# # plt.savefig("plots/pca_covid19_label_TFID_3d.png")
+# plt.show()
 
 from sklearn.manifold import TSNE
 
