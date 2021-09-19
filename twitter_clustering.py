@@ -227,14 +227,14 @@ plt.show()
 # df.plot.scatter(x='subjectivity', y='polarity')
 # plt.show()
 
-all_words = ' '.join([text for text in df['clean_tweet'].astype(str)])
-from wordcloud import WordCloud
-wordcloud = WordCloud(width=800, height=500, random_state=21, max_font_size=110).generate(all_words)
+# all_words = ' '.join([text for text in df['clean_tweet'].astype(str)])
+# from wordcloud import WordCloud
+# wordcloud = WordCloud(width=800, height=500, random_state=21, max_font_size=110).generate(all_words)
 
-plt.figure(figsize=(10, 7))
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis('off')
-plt.show()
+# plt.figure(figsize=(10, 7))
+# plt.imshow(wordcloud, interpolation="bilinear")
+# plt.axis('off')
+# plt.show()
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 def vectorize(text, maxx_features):
